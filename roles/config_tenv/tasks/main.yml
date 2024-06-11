@@ -1,0 +1,13 @@
+---
+
+- name: Install Terraform version
+  shell: tenv tf install {{ terraform_version }}
+
+- name: Use Terraform version
+  shell: tenv tf use {{ terraform_version }}
+
+- name: Install Terragrunt version
+  shell: tenv tg install {{ terragrunt_version }}
+
+- name: Use Terragrunt version
+  shell: tenv tg use {{ terragrunt_version }}

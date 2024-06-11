@@ -1,0 +1,32 @@
+{
+ "collection_info": {
+  "namespace": "romank8k",
+  "name": "developer",
+  "version": "1.0.0",
+  "authors": [
+   "Roman Khmelichek"
+  ],
+  "readme": "README.md",
+  "tags": [],
+  "description": "Building blocks used to construct playbooks to automate creation of development environments.",
+  "license": [
+   "MIT"
+  ],
+  "license_file": null,
+  "dependencies": {
+   "community.general": ">=8.4.0"
+  },
+  "repository": "https://github.com/romank8k/ansible-collection-developer",
+  "documentation": "https://github.com/romank8k/ansible-collection-developer",
+  "homepage": "https://github.com/romank8k/ansible-collection-developer",
+  "issues": "https://github.com/romank8k/ansible-collection-developer/issues"
+ },
+ "file_manifest_file": {
+  "name": "FILES.json",
+  "ftype": "file",
+  "chksum_type": "sha256",
+  "chksum_sha256": "0e742491feedb2d5da2f14bc0db39257e550406a448e21eacb53ad0b2acda6e3",
+  "format": 1
+ },
+ "format": 1
+}

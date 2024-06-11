@@ -1,0 +1,4 @@
+---
+
+dependencies:
+  - require_python_module_pexpect

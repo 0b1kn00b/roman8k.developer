@@ -1,0 +1,17 @@
+---
+
+- import_playbook: setup.yml
+
+- hosts: default
+  environment:
+    PATH: "{{ path | default(ansible_env.PATH) }}"
+  pre_tasks:
+    - name: Install Homebrew formulae
+      community.general.homebrew:
+        name:
+          - node
+          - nodenv
+        path: "{{ homebrew_prefix }}/bin"
+  roles:
+    - role: config_nodenv
+      tags: config_nodenv

@@ -1,0 +1,100 @@
+---
+
+- name: Set user managed scripts dir
+  set_fact:
+    user_sh_profile_dir: .profile.d
+    user_sh_rc_dir: .bashrc.d
+
+- name: Delete {{ user_sh_rc_dir }} directory
+  file:
+    path: "{{ ansible_user_dir }}/{{ user_sh_rc_dir }}"
+    state: absent
+  when: initialize | bool
+
+- name: Create {{ user_sh_rc_dir }} directory
+  file:
+    path: "{{ ansible_user_dir }}/{{ user_sh_rc_dir }}"
+    state: directory
+
+- name: Delete {{ user_sh_profile_dir }} directory
+  file:
+    path: "{{ ansible_user_dir }}/{{ user_sh_profile_dir }}"
+    state: absent
+  when: initialize | bool
+
+- name: Create {{ user_sh_profile_dir }} directory
+  file:
+    path: "{{ ansible_user_dir }}/{{ user_sh_profile_dir }}"
+    state: directory
+
+- name: Initialize ~/.bash_profile
+  template:
+    src: bash_profile.j2
+    dest: "{{ ansible_user_dir }}/.bash_profile"
+  when: initialize | bool
+
+- name: Initialize ~/.bashrc
+  template:
+    src: bashrc.j2
+    dest: "{{ ansible_user_dir }}/.bashrc"
+  when: initialize | bool
+
+- name: Make sure ~/.bash_profile loads user-managed exports
+  blockinfile:
+    path: "{{ ansible_user_dir }}/.bash_profile"
+    marker: "# {mark} USER MANAGED EXPORTS"
+    insertbefore: BOF
+    create: true
+    block: |
+      if [ -d ~/{{ user_sh_profile_dir }} ]; then
+          for profile in ~/{{ user_sh_profile_dir }}/*; do
+              if [ -f "$profile" ]; then
+                  source "$profile"
+              fi
+          done
+      fi
+      unset profile
+
+- name: Make sure ~/.bashrc loads user-managed scripts
+  blockinfile:
+    path: "{{ ansible_user_dir }}/.bashrc"
+    marker: "# {mark} USER MANAGED ALIASES AND FUNCTIONS"
+    insertbefore: BOF
+    create: true
+    block: |
+      if [ -d ~/{{ user_sh_rc_dir }} ]; then
+          for rc in ~/{{ user_sh_rc_dir }}/*; do
+              if [ -f "$rc" ]; then
+                  source "$rc"
+              fi
+          done
+      fi
+      unset rc
+
+- name: Run .profile.d exports role
+  include_role:
+    name: config_sh_exports
+  vars:
+    sh_shell: bash
+    sh_exports: "{{ config_bash_exports }}"
+  when: config_bash_exports is defined
+
+- name: Run .bash_profile config roles
+  include_tasks: config.yml
+  vars:
+    sh_shell: bash
+    sh_config_file: .bash_profile
+  with_items: "{{ config_bash_profile_roles }}"
+  loop_control:
+    loop_var: config
+  when: config_bash_profile_roles is defined
+
+- name: Run .bashrc config roles
+  include_tasks: config.yml
+  vars:
+    sh_shell: bash
+    sh_config_file: .bashrc
+  with_items: "{{ config_bash_rc_roles }}"
+  loop_control:
+    loop_var: config
+  when: config_bash_rc_roles is defined

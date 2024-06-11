@@ -1,0 +1,14 @@
+---
+
+- import_playbook: setup.yml
+
+- hosts: default
+  environment:
+    PATH: "{{ path | default(ansible_env.PATH) }}"
+  roles:
+    - role: ssh_keys
+      ssh_keys: "{{ my_ssh_keys }}"
+      tags: ssh_keys
+    - role: config_ssh
+      configs: "{{ config_ssh }}"
+      tags: config_ssh
